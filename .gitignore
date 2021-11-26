@@ -13,6 +13,7 @@
 !/setup.py
 !/tools.py
 !/update_deps.py
+!/face_clean.py
 
 # Support files
 !_travis/
