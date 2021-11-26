@@ -53,6 +53,8 @@ class Align(Aligner):
         """ Compile the detected faces for prediction """
         faces, batch["roi"], batch["offsets"] = self.align_image(batch)
         faces = self._normalize_faces(faces)
+        if len(faces) == 0:
+            faces = [np.zeros((128, 128, 3))]
         batch["feed"] = np.array(faces, dtype="float32")[..., :3].transpose((0, 3, 1, 2))
         return batch
 
@@ -79,6 +81,8 @@ class Align(Aligner):
             face = image[roi[1] + abs(offset[1]): roi[3] + abs(offset[1]),
                          roi[0] + abs(offset[0]): roi[2] + abs(offset[0])]
             interpolation = cv2.INTER_CUBIC if face.shape[0] < self.input_size else cv2.INTER_AREA
+            if face.shape[0] * face.shape[1] * face.shape[2] == 0:
+                face = np.zeros((128, 128, 3))
             face = cv2.resize(face, dsize=sizes, interpolation=interpolation)
             faces.append(face)
             rois.append(roi)
